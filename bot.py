@@ -97,4 +97,13 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         logging.info('Service Stopped Bye 👋')
 
+# bot.py
+from database.users_chats_db import db
+
+# Example: fetch some collection
+try:
+    users_collection = db.get_collection("users")
+    print("Number of users in DB:", users_collection.count_documents({}))
+except Exception as e:
+    print("Error accessing collection:", e)
 

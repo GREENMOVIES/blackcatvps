@@ -309,3 +309,33 @@ class Database:
     
 
 db = Database(USER_DB_URI, DATABASE_NAME)
+# database/users_chats_db.py
+from pymongo import MongoClient
+from pymongo.server_api import ServerApi
+import urllib.parse
+import os
+
+# MongoDB password (stored as environment variable for safety)
+password = os.environ.get("MONGO_PASS", "1234567890")  # fallback
+
+# URL-encode password
+encoded_password = urllib.parse.quote_plus(password)
+
+# Non-SRV MongoDB URI (replace shard hosts from Atlas)
+MONGO_URI = f"mongodb://greenmovies325:{encoded_password}@" \
+            "cluster0-shard-00-00.zuu4a.mongodb.net:27017," \
+            "cluster0-shard-00-01.zuu4a.mongodb.net:27017," \
+            "cluster0-shard-00-02.zuu4a.mongodb.net:27017/mydatabase?" \
+            "ssl=true&replicaSet=atlas-xxxx-shard-0&authSource=admin&retryWrites=true&w=majority"
+
+# Create client and database instance
+my_client = MongoClient(MONGO_URI, server_api=ServerApi('1'))
+db = my_client.get_database("mydatabase")  # replace with your DB name
+
+# Optional: test connection
+try:
+    my_client.admin.command('ping')
+    print("✅ Connected to MongoDB successfully!")
+except Exception as e:
+    print("❌ MongoDB connection error:", e)
+
